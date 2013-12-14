@@ -39,6 +39,33 @@ module Enom
       end
     end
 
+    def self.getagreementpage
+      response = Client.request("Command" => "GETAGREEMENTPAGE")['interface_response']
+    end
+
+    def self.authorizetld(list)
+      response = Client.request("Command" => "AuthorizeTLD", :DomainList => list)['interface_response']
+    end
+
+    def self.gettldlist()
+      response = Client.request("Command" => "GetTLDList")['interface_response']
+    end
+
+    def self.sethosts(name,records)
+      sld, tld = parse_sld_and_tld(name)
+      response = Client.request("Command" => "SetHosts", "SLD" => sld, "TLD" => tld, "HostName1" => records[0][0], "RecordType1" => records[0][1], "Address1" => records[0][2], "HostName2" => records[1][0],  "RecordType2" => records[1][1], "Address2" => records[1][2])['interface_response']
+    end
+
+    def self.getcatchall(name)
+      sld, tld = parse_sld_and_tld(name)
+      response = Client.request("Command" => "GetCatchAll", "SLD" => sld, "TLD" => tld)['interface_response']
+    end
+
+    def self.setcatchall(name,forward)
+      sld, tld = parse_sld_and_tld(name)
+      response = Client.request("Command" => "SetCatchAll", "SLD" => sld, "TLD" => tld, "ForwardTo" => forward)['interface_response']
+    end
+
     # Find the domain (must be in your account) on Enom
     def self.find(name)
       sld, tld = parse_sld_and_tld(name)
