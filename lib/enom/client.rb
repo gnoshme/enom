@@ -2,10 +2,16 @@ module Enom
 
   class Client
     include HTTParty
-
+    
     class << self
-      attr_accessor :username, :password, :test
+      attr_accessor :username, :password, :test, :proxy_ip, :proxy_port, :proxy_user, :proxy_password
       alias_method :test?, :test
+
+      class Proxy
+        include HTTParty
+        http_proxy #{self.proxy_ip}, #{self.proxy_port}, #{self.proxy_user}, #{self.proxy_password}
+        
+      end
 
       # All requests must contain the UID, PW, and ResponseType query parameters
       def default_params
@@ -24,7 +30,7 @@ module Enom
       # or other helpful statuses -- everything comes back as a 200.
       def request(params = {})
         params.merge!(default_params)
-        response = get(base_uri, :query => params)
+        response = Proxy.get(base_uri, :query => params)
         case response.code
         when 200
           if response["interface_response"]["ErrCount"] == "0"
